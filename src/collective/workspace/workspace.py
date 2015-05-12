@@ -3,6 +3,7 @@ from BTrees.OOBTree import OOBTree
 from .events import TeamMemberAddedEvent
 from .membership import ITeamMembership
 from .membership import TeamMembership
+from .interfaces import IHasWorkspace, IWorkspace
 from zope.event import notify
 
 
@@ -121,3 +122,21 @@ class Workspace(object):
         if membership is not None:
             membership.remove_from_team()
         return membership
+
+from plone.app.widgets.interfaces import IFieldPermissionChecker
+from zope.component import adapts
+from zope.interface import implements
+
+
+from plone.app.dexterity.permissions import DXFieldPermissionChecker
+
+
+class WorkspaceFieldPermissionChecker(DXFieldPermissionChecker):
+    implements(IFieldPermissionChecker)
+    adapts(IHasWorkspace)
+
+    DEFAULT_PERMISSION = 'Modify portal content'
+
+    def _get_schemata(self):
+        iterSchemata = super(WorkspaceFieldPermissionChecker, self)._get_schemata()
+        return [intr for intr in iterSchemata] + [IWorkspace(self.context).membership_schema]

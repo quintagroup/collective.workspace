@@ -1,10 +1,11 @@
 from collective.workspace.events import TeamMemberModifiedEvent
 from collective.workspace.events import TeamMemberRemovedEvent
 from collective.workspace.interfaces import IWorkspace
-from collective.workspace.vocabs import UsersSource
+
 from copy import deepcopy
 from plone.autoform import directives as form
 from plone.formwidget.autocomplete import AutocompleteFieldWidget
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.supermodel import model
 from plone.uuid.interfaces import IUUIDGenerator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
@@ -18,10 +19,14 @@ from zope.interface import implementer
 class ITeamMembership(model.Schema):
     """Schema for one person's membership in a team."""
 
-    form.widget(user=AutocompleteFieldWidget)
     user = schema.Choice(
         title=u'User',
-        source=UsersSource,
+        # vocabulary='plone.app.vocabularies.Users',
+        vocabulary='collective.workspace.users_vocab'
+    )
+
+    form.widget(
+        user=AjaxSelectFieldWidget
     )
 
     position = schema.TextLine(

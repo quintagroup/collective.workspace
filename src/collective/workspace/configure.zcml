@@ -71,7 +71,13 @@
 
   <utility
       component=".vocabs.TeamGroupsVocabulary"
+      provides="zope.schema.interfaces.IVocabularyFactory"
       name="collective.workspace.groups" />
+
+  <utility
+      component=".vocabs.UsersFactory"
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      name="collective.workspace.users_vocab" />
 
   <adapter
       factory=".pas.WorkspaceRoles"
@@ -89,6 +95,8 @@
       name="TeamManager"
       />
 
+
+  <adapter factory=".workspace.WorkspaceFieldPermissionChecker" />
   <adapter factory=".catalog.workspace_members" name="workspace_members" />
   <adapter factory=".catalog.null_indexer" name="workspace_members" />
 

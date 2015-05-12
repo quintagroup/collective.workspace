@@ -78,6 +78,7 @@ class TeamRosterView(AutoFields, DisplayForm):
 
 @implementer(IPublishTraverse)
 class TeamMemberEditForm(AutoExtensibleForm, EditForm):
+    _finished = False
 
     def __init__(self, context, request):
         self.context = context
@@ -151,7 +152,7 @@ class TeamMemberEditForm(AutoExtensibleForm, EditForm):
             raise
 
         self._finished = True
-
+        
     @property
     def can_remove(self):
         return self.user_id
@@ -162,9 +163,15 @@ class TeamMemberEditForm(AutoExtensibleForm, EditForm):
         membership.remove_from_team()
         self._finished = True
 
-    _finished = False
+    def nextURL(self):
+        view_url = self.context.absolute_url()
+        return view_url + '/@@team-roster'
+
 
     def render(self):
         if self._finished:
+            self.request.response.redirect(self.nextURL())
+
             return ' '
         return super(TeamMemberEditForm, self).render()
+
